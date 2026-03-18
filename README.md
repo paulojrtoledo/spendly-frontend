@@ -1,32 +1,81 @@
-# Elo Bank — Frontend
+# Elo Bank 💳 — Frontend
 
-Modern and responsive frontend for Elo Bank, a digital banking platform built for study and portfolio purposes.
+**Elo Bank** is a digital banking platform under development, built with focus on **security**, **scalability** and **best practices**. The project simulates a real bank, allowing account opening, transfers (PIX/TED), Pix key management and secure authentication.
 
-## Tech Stack
+> 🚧 **Project Status:** Active development
 
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS v4
-- React Router DOM v7
-- Axios
+---
 
-## Features (in progress)
+## 🎯 Project Goal
 
-- [x] Login page with CPF and password validation
-- [ ] Customer registration
-- [ ] Dashboard
-- [ ] Transactions
-- [ ] Pix key management
+Build a full stack application from scratch that demonstrates:
 
-## Related Repository
+- Mastery of **React, TypeScript and ecosystem**
+- Clean component architecture and best practices
+- Ability to build a **full stack** application
+
+---
+
+## 🚀 Tech Stack
+
+- **React 19**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS v4**
+- **React Router DOM v7**
+- **Axios**
+
+---
+
+## ✅ Progress
+
+### Phase 1 — Authentication (In progress)
+
+- ✅ Project structure
+- ✅ Login page with CPF and password validation
+- ✅ Controlled inputs with React state
+- ⏳ API integration
+- ⏳ Registration page
+
+### Phase 2 — Core Features (Pending)
+
+- ⏳ Dashboard
+- ⏳ Transactions
+- ⏳ Pix key management
+- ⏳ Transaction history
+
+---
+
+## 📦 How to run locally
+```bash
+# Clone the repository
+git clone https://github.com/paulojrtoledo/elobank-frontend.git
+
+# Access the folder
+cd elobank-frontend
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+```
+
+---
+
+## 🔗 Related Repository
 
 Backend: [elobank-backend](https://github.com/paulojrtoledo/elobank-backend)
 
-## Author
+---
 
-Paulo Emilio — [GitHub](https://github.com/paulojrtoledo) · [LinkedIn](https://linkedin.com/in/seulinkedin)
+## 📌 Author
 
-## License
+**Paulo Emilio de Toledo Jr**
+[LinkedIn](https://www.linkedin.com/in/pauloemilio-tech) | [GitHub](https://github.com/paulojrtoledo)
 
-Developed for study and portfolio purposes.
+---
+
+## 📝 License
+
+This project is developed for study and portfolio purposes.
