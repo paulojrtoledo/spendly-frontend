@@ -34,8 +34,16 @@ Build a full stack application from scratch that demonstrates:
 - ✅ Project structure
 - ✅ Login page with CPF and password validation
 - ✅ Controlled inputs with React state
-- ⏳ API integration
-- ⏳ Registration page
+- ✅ API client configuration (Axios)
+- ✅ Customer registration page
+- ✅ Integration with backend (`POST /customers`)
+- ✅ Form validation aligned with backend rules
+- ✅ Error handling with API responses
+
+- ⏳ Login integration with backend (`POST /login`)
+- ⏳ JWT handling (store and use token)
+
+---
 
 ### Phase 2 — Core Features (Pending)
 
@@ -47,6 +55,7 @@ Build a full stack application from scratch that demonstrates:
 ---
 
 ## 📦 How to run locally
+
 ```bash
 # Clone the repository
 git clone https://github.com/paulojrtoledo/elobank-frontend.git
@@ -59,23 +68,74 @@ npm install
 
 # Run development server
 npm run dev
-```
+
+# Elo Bank 💳 — Frontend
+
+**Elo Bank** is a digital banking platform under development, built with focus on **security**, **scalability** and **best practices**. The project simulates a real bank, allowing account opening, transfers (PIX/TED), Pix key management and secure authentication.
+
+> 🚧 **Project Status:** Active development
 
 ---
 
-## 🔗 Related Repository
+## 🎯 Project Goal
 
-Backend: [elobank-backend](https://github.com/paulojrtoledo/elobank-backend)
+Build a full stack application from scratch that demonstrates:
 
----
-
-## 📌 Author
-
-**Paulo Emilio de Toledo Jr**
-[LinkedIn](https://www.linkedin.com/in/pauloemilio-tech) | [GitHub](https://github.com/paulojrtoledo)
+- Mastery of **React, TypeScript and ecosystem**
+- Clean component architecture and best practices
+- Ability to build a **full stack** application
 
 ---
 
-## 📝 License
+## 🚀 Tech Stack
 
-This project is developed for study and portfolio purposes.
+- **React 19**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS v4**
+- **React Router DOM v7**
+- **Axios**
+
+---
+
+## ✅ Progress
+
+### Phase 1 — Authentication (In progress)
+
+- ✅ Project structure
+- ✅ Login page with CPF and password validation
+- ✅ Controlled inputs with React state
+- ✅ API client configuration (Axios)
+- ✅ Customer registration page
+- ✅ Integration with backend (`POST /customers`)
+- ✅ Form validation aligned with backend rules
+- ✅ Error handling with API responses
+
+- ⏳ Login integration with backend (`POST /login`)
+- ⏳ JWT handling (store and use token)
+
+---
+
+### Phase 2 — Core Features (Pending)
+
+- ⏳ Dashboard
+- ⏳ Transactions
+- ⏳ Pix key management
+- ⏳ Transaction history
+
+---
+
+## 📦 How to run locally
+
+```bash
+# Clone the repository
+git clone https://github.com/paulojrtoledo/elobank-frontend.git
+
+# Access the folder
+cd elobank-frontend
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
