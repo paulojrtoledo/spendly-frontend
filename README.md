@@ -54,6 +54,8 @@ Build a full stack application from scratch that demonstrates:
 
 ---
 
+Related Repository (backend) - https://github.com/paulojrtoledo/elobank-backend
+
 ## 📦 How to run locally
 
 ```bash
