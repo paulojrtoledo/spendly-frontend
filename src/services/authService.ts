@@ -11,7 +11,7 @@ type LoginResponse = {
 };
 
 export async function login({ cpf, password }: LoginRequest) {
-  const response = await apiClient.post<LoginResponse>("/login", {
+  const response = await apiClient.post<LoginResponse>("/auth/login", {
     cpf,
     password,
   });
