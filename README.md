@@ -1,15 +1,22 @@
+<<<<<<< HEAD
 Spendly 💰 — Frontend
 
 Spendly is a personal finance management platform under development, built with focus on scalability, clean architecture, and real-world usability.
 
 Originally designed as a digital banking simulation (Elo Bank), the project evolved into Spendly to better represent a practical financial product, focused on expense tracking, organization, and user-centered features.
+=======
+Spendly - Frontend
 
-🚧 Project Status: Active development
+Frontend web do Spendly, uma aplicacao de gestao financeira pessoal.
+>>>>>>> 207a87b (docs: align frontend branding with Spendly)
 
-🎯 Project Goal
+Este projeto contem, no estado atual, o fluxo de autenticacao e cadastro integrado ao backend.
 
-Build a full stack application from scratch that demonstrates:
+Project status: Active development
 
+Tech stack
+
+<<<<<<< HEAD
 Mastery of React, TypeScript, and modern frontend ecosystem
 Clean component architecture and best practices
 Integration with a secure backend (JWT-based authentication)
@@ -52,9 +59,18 @@ Transactions (future: expense/income tracking)
 Pix key management (subject to domain evolution)
 Transaction history
 🔐 Authentication Flow
+=======
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS v4
+- React Router DOM v7
+- Axios
+>>>>>>> 207a87b (docs: align frontend branding with Spendly)
 
-Complete authentication flow implemented:
+Implemented in this frontend
 
+<<<<<<< HEAD
 User submits CPF and password
 Frontend calls POST /auth/login
 Backend returns JWT token
@@ -66,29 +82,63 @@ Backend validates token and identifies the user
 Login
 
 POST /auth/login
+=======
+- Login page with CPF/password validation
+- Register page
+- Integration with backend `POST /auth/login`
+- Integration with backend `POST /customers`
+- JWT token storage in `localStorage`
+- Axios interceptor sending `Authorization: Bearer <token>`
 
-Request:
+Planned for future development
 
+- Fetch authenticated user data (`GET /customers/me`)
+- Additional personal finance modules
+
+Authentication flow
+
+1. User submits CPF and password
+2. Frontend calls `POST /auth/login`
+3. Backend returns JWT token
+4. Token is stored in `localStorage`
+5. Axios interceptor attaches `Authorization: Bearer <token>`
+
+API integration snapshot
+
+Login
+>>>>>>> 207a87b (docs: align frontend branding with Spendly)
+
+- Endpoint: `POST /auth/login`
+
+Request example:
+
+```json
 {
   "cpf": "12345678901",
   "password": "123456"
 }
+```
 
-Response:
+Response example:
 
+```json
 {
   "token": "eyJhbGciOiJIUzI1NiJ9...",
   "type": "Bearer"
 }
+<<<<<<< HEAD
 Get Current User
 
 GET /customers/me
+=======
+```
+>>>>>>> 207a87b (docs: align frontend branding with Spendly)
 
-Headers:
+Register customer
 
-Authorization: Bearer <JWT_TOKEN>
-🔗 Related Repository
+- Endpoint: `POST /customers`
 
+<<<<<<< HEAD
 Backend:
 https://github.com/paulojrtoledo/spendly-backend
 
@@ -100,10 +150,15 @@ git clone https://github.com/paulojrtoledo/spendly-frontend.git
 cd spendly-frontend
 
 # Install dependencies
-npm install
+=======
+How to run locally
 
-# Run development server
+```bash
+>>>>>>> 207a87b (docs: align frontend branding with Spendly)
+npm install
 npm run dev
-👤 Author
+```
+
+Author
 
 Paulo Emilio de Toledo Jr
