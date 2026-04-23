@@ -44,7 +44,7 @@ export function LoginPage() {
 
   return (
     <div>
-      <h1>Bem-vindo ao Elo Bank</h1>
+      <h1>Bem-vindo ao Spendly</h1>
 
       <p>Faça login abaixo e acesse sua conta!</p>
 
@@ -74,7 +74,7 @@ export function LoginPage() {
       </form>
 
       <Link to="/forgot-password">Esqueci minha senha</Link>
-      <Link to="/register">Não tem conta na Elo Bank? Cadastre-se</Link>
+      <Link to="/register">Não tem conta na Spendly? Cadastre-se</Link>
     </div>
   );
 }
