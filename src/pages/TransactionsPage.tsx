@@ -4,11 +4,21 @@ import type { Transaction } from "../types/transaction";
 import TransactionForm from "../components/TransactionForm";
 import TransactionList from "../components/TransactionList";
 import { ThemeToggle } from "../components/ThemeToggle";
+import {
+  getFriendlyApiErrorMessage,
+  getReverseTransactionErrorMessage,
+} from "../utils/apiError";
+
+const REVERSE_CONFIRMATION_MESSAGE =
+  "Deseja realmente estornar esta transação? O impacto financeiro será revertido e a transação continuará visível no histórico.";
 
 export function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reverseError, setReverseError] = useState<string | null>(null);
+  const [reverseSuccess, setReverseSuccess] = useState<string | null>(null);
+  const [reversingIds, setReversingIds] = useState<number[]>([]);
 
   async function load() {
     setLoading(true);
@@ -17,7 +27,7 @@ export function TransactionsPage() {
       const data = await transactionService.getTransactions();
       setTransactions(data);
     } catch (err) {
-      setError((err as Error).message || "Erro ao carregar transações");
+      setError(getFriendlyApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -30,6 +40,34 @@ export function TransactionsPage() {
   function handleCreated(t: Transaction) {
     // prepend new transaction
     setTransactions((prev) => [t, ...prev]);
+  }
+
+  async function handleReverse(transaction: Transaction) {
+    if (
+      transaction.status === "REVERSED" ||
+      reversingIds.includes(transaction.id) ||
+      !window.confirm(REVERSE_CONFIRMATION_MESSAGE)
+    ) {
+      return;
+    }
+
+    setReverseError(null);
+    setReverseSuccess(null);
+    setReversingIds((current) => [...current, transaction.id]);
+
+    try {
+      const reversed = await transactionService.reverseTransaction(transaction.id);
+      setTransactions((current) =>
+        current.map((item) => (item.id === reversed.id ? reversed : item))
+      );
+      setReverseSuccess("Transação estornada com sucesso.");
+    } catch (err) {
+      setReverseError(getReverseTransactionErrorMessage(err));
+    } finally {
+      setReversingIds((current) =>
+        current.filter((id) => id !== transaction.id)
+      );
+    }
   }
 
   return (
@@ -63,10 +101,25 @@ export function TransactionsPage() {
                   : "transações registradas"}
               </p>
             </div>
+            {reverseSuccess && (
+              <p
+                className="mb-4 rounded-lg border border-[var(--color-success)] bg-[var(--color-surface)] px-4 py-3 text-sm text-[var(--color-success)]"
+                role="status"
+              >
+                {reverseSuccess}
+              </p>
+            )}
+            {reverseError && (
+              <p className="app-error mb-4 rounded-lg border px-4 py-3 text-sm" role="alert">
+                {reverseError}
+              </p>
+            )}
             <TransactionList
               transactions={transactions}
               loading={loading}
               error={error}
+              onReverse={handleReverse}
+              reversingIds={reversingIds}
             />
           </section>
         </div>

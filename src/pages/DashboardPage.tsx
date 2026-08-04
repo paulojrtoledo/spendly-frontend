@@ -192,15 +192,18 @@ export function DashboardPage() {
                 <ul className="divide-y divide-[var(--color-border)]">
                   {summary.recentTransactions.map((transaction) => {
                     const isIncome = transaction.type === "INCOME";
+                    const isReversed = transaction.status === "REVERSED";
                     const amountPrefix = isIncome ? "+" : "-";
 
                     return (
                       <li
                         key={transaction.id}
-                        className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                        className={`flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 ${
+                          isReversed ? "bg-[var(--color-surface-muted)] opacity-65" : ""
+                        }`}
                       >
                         <div className="min-w-0">
-                          <p className="truncate font-semibold">
+                          <p className={`truncate font-semibold ${isReversed ? "line-through" : ""}`}>
                             {transaction.description?.trim() || "Sem descrição"}
                           </p>
                           <p className="mt-1 text-sm text-[var(--color-muted)]">
@@ -210,14 +213,25 @@ export function DashboardPage() {
                           <p className="mt-1 text-xs text-[var(--color-muted)]">
                             {dateFormatter.format(new Date(transaction.createdAt))}
                           </p>
+                          <span
+                            className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                              isReversed
+                                ? "border-[var(--color-muted)] text-[var(--color-muted)]"
+                                : "border-[var(--color-success)] text-[var(--color-success)]"
+                            }`}
+                          >
+                            {isReversed ? "Estornada" : "Ativa"}
+                          </span>
                         </div>
 
                         <div className="sm:text-right">
                           <p
                             className={`font-bold ${
-                              isIncome
-                                ? "text-[var(--color-success)]"
-                                : "text-[var(--color-danger)]"
+                              isReversed
+                                ? "text-[var(--color-muted)] line-through"
+                                : isIncome
+                                  ? "text-[var(--color-success)]"
+                                  : "text-[var(--color-danger)]"
                             }`}
                           >
                             {amountPrefix}
