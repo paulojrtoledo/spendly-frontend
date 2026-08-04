@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -10,12 +8,11 @@ import type { ReactNode } from "react";
 import { login as loginService } from "../services/authService";
 import { createCustomer, getMe } from "../services/customerService";
 import type { AuthContextType, User } from "../types/auth";
+import { AuthContext } from "./authContextValue";
 
 // Chave única para o token no localStorage — centralizada aqui para evitar
 // magic strings espalhadas pelo código.
 const TOKEN_KEY = "token";
-
-const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -106,16 +103,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-// Hook com guard: lança erro se usado fora do AuthProvider, tornando
-// o erro imediato e descritivo em vez de um crash silencioso com null.
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-
-  if (context === null) {
-    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
-  }
-
-  return context;
 }
