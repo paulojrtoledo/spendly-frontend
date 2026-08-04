@@ -13,6 +13,13 @@ export const transactionService = {
     const res = await apiClient.post<Transaction>(BASE, payload);
     return res.data;
   },
+
+  async reverseTransaction(transactionId: number): Promise<Transaction> {
+    const res = await apiClient.post<Transaction>(
+      `${BASE}/${transactionId}/reverse`
+    );
+    return res.data;
+  },
 };
 
 export default transactionService;

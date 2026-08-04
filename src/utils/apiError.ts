@@ -35,3 +35,18 @@ export function getFriendlyApiErrorMessage(error: unknown): string {
 
   return "Ocorreu um erro desconhecido.";
 }
+
+export function getReverseTransactionErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    switch (error.response?.status) {
+      case 400:
+        return "Saldo insuficiente para estornar esta receita.";
+      case 404:
+        return "Transação não encontrada.";
+      case 409:
+        return "Esta transação já foi estornada.";
+    }
+  }
+
+  return getFriendlyApiErrorMessage(error);
+}
