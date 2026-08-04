@@ -882,6 +882,6 @@ Planned next steps include:
 **Paulo Emilio**
 Frontend / Full-Stack Developer in progress
 
-* GitHub: [paulojrtoledo](https://github.com/paulojrtoledo)
+* GitHub: [paulojrtoledo](https://github.com/pauloemilio-tech)
 * LinkedIn: [Paulo Emilio](https://www.linkedin.com/)
 
