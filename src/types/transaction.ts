@@ -1,6 +1,8 @@
 export const TRANSACTION_TYPES = ["INCOME", "EXPENSE"] as const;
 export type TransactionType = (typeof TRANSACTION_TYPES)[number];
 
+export type TransactionStatus = "ACTIVE" | "REVERSED";
+
 export const INCOME_CATEGORIES = [
   "SALARY",
   "FREELANCE",
@@ -66,6 +68,7 @@ export type Transaction = {
   amount: number;
   description?: string | null;
   createdAt: string;
+  status: TransactionStatus;
 };
 
 export default {};

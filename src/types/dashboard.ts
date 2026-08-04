@@ -1,5 +1,6 @@
 import type {
   TransactionCategory,
+  TransactionStatus,
   TransactionType,
 } from "./transaction";
 
@@ -11,6 +12,7 @@ export type RecentTransaction = {
   category: TransactionCategory;
   walletName: string;
   createdAt: string;
+  status: TransactionStatus;
 };
 
 export type DashboardSummary = {
