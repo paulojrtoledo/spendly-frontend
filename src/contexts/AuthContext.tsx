@@ -5,9 +5,12 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { login as loginService } from "../services/authService";
+import {
+  createGuestSession,
+  login as loginService,
+} from "../services/authService";
 import { createCustomer, getMe } from "../services/customerService";
-import type { AuthContextType, User } from "../types/auth";
+import type { AuthContextType, AuthResponse, User } from "../types/auth";
 import { AuthContext } from "./authContextValue";
 
 // Chave única para o token no localStorage — centralizada aqui para evitar
@@ -67,8 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [logout]);
 
-  const login = useCallback(async (cpf: string, password: string) => {
-    const data = await loginService({ cpf, password });
+  const completeAuthentication = useCallback(async (data: AuthResponse) => {
     localStorage.setItem(TOKEN_KEY, data.token);
     setToken(data.token);
     // Busca os dados completos do usuário logo após o login para popular
@@ -76,6 +78,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const userData = await getMe();
     setUser(userData);
   }, []);
+
+  const login = useCallback(async (cpf: string, password: string) => {
+    const data = await loginService({ cpf, password });
+    await completeAuthentication(data);
+  }, [completeAuthentication]);
+
+  const loginAsGuest = useCallback(async () => {
+    const data = await createGuestSession();
+    await completeAuthentication(data);
+  }, [completeAuthentication]);
 
   const register = useCallback(
     async (name: string, cpf: string, password: string, email: string) => {
@@ -95,11 +107,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: user !== null && token !== null,
       isLoading,
       login,
+      loginAsGuest,
       register,
       logout,
       loadAuthenticatedUser,
     }),
-    [user, token, isLoading, login, register, logout, loadAuthenticatedUser]
+    [
+      user,
+      token,
+      isLoading,
+      login,
+      loginAsGuest,
+      register,
+      logout,
+      loadAuthenticatedUser,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
