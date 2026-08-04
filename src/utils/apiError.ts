@@ -50,3 +50,17 @@ export function getReverseTransactionErrorMessage(error: unknown): string {
 
   return getFriendlyApiErrorMessage(error);
 }
+
+export function getGuestAuthErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      return "Não foi possível conectar ao servidor.";
+    }
+
+    if (error.response.status === 503) {
+      return "Não foi possível criar o acesso de visitante agora. Tente novamente.";
+    }
+  }
+
+  return "Não foi possível entrar como visitante.";
+}

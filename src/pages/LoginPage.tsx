@@ -1,47 +1,18 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { isAxiosError } from "axios";
 import { useAuth } from "../hooks/useAuth";
 import { ThemeToggle } from "../components/ThemeToggle";
-
-const DEMO_CREDENTIALS = {
-  cpf: "12345678901",
-  password: "123456",
-};
-
-type LoginMode = "manual" | "demo";
+import { getGuestAuthErrorMessage } from "../utils/apiError";
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginAsGuest } = useAuth();
   const [cpf, setCpf] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [loadingMode, setLoadingMode] = useState<LoginMode | null>(null);
-
-  async function authenticate(
-    credentials: { cpf: string; password: string },
-    mode: LoginMode
-  ) {
-    if (loadingMode !== null) {
-      return;
-    }
-
-    setError(null);
-    setLoadingMode(mode);
-
-    try {
-      // PublicRoute redirects to /dashboard after the auth context is updated.
-      await login(credentials.cpf, credentials.password);
-    } catch (err: unknown) {
-      if (isAxiosError(err)) {
-        setError(err.response?.data?.message || "Erro ao fazer login");
-      } else {
-        setError("Erro inesperado");
-      }
-    } finally {
-      setLoadingMode(null);
-    }
-  }
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
+  const guestRequestInFlight = useRef(false);
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -56,14 +27,41 @@ export function LoginPage() {
       return;
     }
 
-    await authenticate({ cpf, password }, "manual");
+    setError(null);
+    setIsLoginLoading(true);
+
+    try {
+      // PublicRoute redirects to /dashboard after the auth context is updated.
+      await login(cpf, password);
+    } catch (err: unknown) {
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message || "Erro ao fazer login");
+      } else {
+        setError("Erro inesperado");
+      }
+    } finally {
+      setIsLoginLoading(false);
+    }
   }
 
-  async function handleDemoLogin() {
-    await authenticate(DEMO_CREDENTIALS, "demo");
-  }
+  async function handleGuestLogin() {
+    if (guestRequestInFlight.current) {
+      return;
+    }
 
-  const isLoading = loadingMode !== null;
+    guestRequestInFlight.current = true;
+    setError(null);
+    setIsGuestLoading(true);
+
+    try {
+      await loginAsGuest();
+    } catch (err: unknown) {
+      setError(getGuestAuthErrorMessage(err));
+    } finally {
+      guestRequestInFlight.current = false;
+      setIsGuestLoading(false);
+    }
+  }
 
   return (
     <main className="app-page relative flex min-h-screen items-center justify-center px-4 py-20 sm:px-6">
@@ -139,10 +137,10 @@ export function LoginPage() {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoginLoading}
             className="app-button-primary w-full rounded-lg px-4 py-3 font-semibold shadow-sm focus:outline-none focus:ring-4 focus:ring-[var(--color-focus)]"
           >
-            {loadingMode === "manual" ? "Entrando..." : "Entrar"}
+            {isLoginLoading ? "Entrando..." : "Entrar"}
           </button>
 
           <div className="flex items-center gap-3" aria-hidden="true">
@@ -155,12 +153,13 @@ export function LoginPage() {
 
           <button
             type="button"
-            onClick={handleDemoLogin}
-            disabled={isLoading}
+            onClick={handleGuestLogin}
+            disabled={isGuestLoading}
+            aria-busy={isGuestLoading}
             className="app-button-secondary w-full rounded-lg border px-4 py-3 font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--color-focus)]"
           >
-            {loadingMode === "demo"
-              ? "Acessando..."
+            {isGuestLoading
+              ? "Criando acesso..."
               : "Entrar como visitante"}
           </button>
         </form>
