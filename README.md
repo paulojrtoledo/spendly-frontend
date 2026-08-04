@@ -18,7 +18,7 @@ The Spendly frontend is deployed on Vercel and communicates with the backend thr
 
 ## Demo Access
 
-The application includes a visitor access option for portfolio demonstration purposes.
+The application includes isolated guest access for portfolio demonstration purposes.
 
 On the login screen, click:
 
@@ -26,7 +26,9 @@ On the login screen, click:
 Entrar como visitante
 ```
 
-The demo user allows recruiters, reviewers and visitors to access the authenticated dashboard without manually creating an account.
+Each click sends `POST /auth/guest` without requesting a CPF or password. The backend creates a unique temporary customer and returns a standard JWT, which the frontend processes through the normal authentication flow.
+
+Guest sessions do not share wallets or transactions. Each temporary account starts without wallets or transactions, and all data remains isolated by the authenticated customer.
 
 ---
 
@@ -101,13 +103,17 @@ The backend API is maintained in a separate repository:
 The frontend currently includes:
 
 * Complete authentication flow
-* Visitor demo login
+* Isolated guest sessions
 * Public and protected route system
 * JWT session persistence
 * Automatic logout on invalid or expired session
 * Wallet management module
 * Financial transactions module
+* `ACTIVE` and `REVERSED` transaction status support
+* Transaction reversal flow with preserved history
+* Distinct visual states for reversed transactions
 * Authenticated financial dashboard
+* Dashboard totals excluding reversed transactions
 * Real-time wallet balance updates
 * Dynamic transaction categories
 * Backend integration with Axios
@@ -150,7 +156,12 @@ This transition allowed the project to:
 
 * Login page
 * Register page
-* Visitor demo login
+* Isolated guest session creation
+* Guest authentication through `POST /auth/guest`
+* Unique temporary customer per guest access
+* Shared JWT authentication completion flow
+* Independent guest loading state
+* Inline guest authentication error handling
 * CPF and password validation
 * JWT authentication flow
 * Authentication persistence with localStorage
@@ -225,6 +236,15 @@ The transaction module handles financial operations linked to wallets.
 * Real-time balance updates
 * Friendly financial validation feedback
 * Transaction listing
+* `ACTIVE` and `REVERSED` transaction statuses
+* Transaction reversal action
+* Confirmation before reversal
+* Reversal loading state per transaction
+* Reversal success and error feedback
+* Reversed transactions preserved in history
+* Reversed values visually neutralized
+* Reversal available only for `ACTIVE` transactions
+* Wallet balance restoration after reversal
 * Protected financial operations
 * Loading and error handling
 * Automatic session invalidation on 401
@@ -261,6 +281,9 @@ The transaction module handles financial operations linked to wallets.
 * Wallet balances update automatically after transactions
 * Invalid sessions automatically redirect users to login
 * Income and expense values receive clear visual distinction
+* Reversed transactions remain visible instead of being removed
+* Reversed values use a neutral, struck-through visual treatment
+* Only `ACTIVE` transactions expose the reversal action
 
 ---
 
@@ -277,6 +300,10 @@ The dashboard module displays a real financial summary from the authenticated ba
 * Active wallet count
 * Transaction count
 * Recent transactions list
+* Recent transaction `ACTIVE` and `REVERSED` status rendering
+* Reversed transactions preserved with a distinct visual style
+* Income and expense totals calculated from active transactions
+* Reversed transactions excluded from total income and total expense
 * Loading state
 * Error state
 * Retry action
@@ -306,6 +333,7 @@ GET /dashboard/summary
       "type": "EXPENSE",
       "category": "FOOD",
       "walletName": "Main Wallet",
+      "status": "ACTIVE",
       "createdAt": "2026-05-25T20:29:00.910114"
     }
   ]
@@ -387,7 +415,7 @@ Neon PostgreSQL Database
 * Vercel proxy configured through `/api`
 * SPA fallback configured for React Router routes
 * Environment-based API URL configuration
-* Visitor demo login working in deployed environment
+* Isolated guest access working in production
 
 ## Vercel proxy
 
@@ -397,9 +425,11 @@ Production frontend calls:
 
 ```txt
 /api/auth/login
+/api/auth/guest
 /api/customers/me
 /api/wallets
 /api/transactions
+/api/transactions/{id}/reverse
 /api/dashboard/summary
 ```
 
@@ -451,6 +481,17 @@ The authentication system was structured using React Context API and protected r
 9. Invalid sessions automatically logout the user
 10. User is redirected to login when authentication is no longer valid
 
+## Guest Authentication Flow
+
+1. Visitor clicks `Entrar como visitante`
+2. Frontend sends `POST /auth/guest` without a request body
+3. Backend creates a unique temporary customer
+4. Backend returns the standard JWT response
+5. Frontend stores the token using the normal authentication flow
+6. AuthContext loads `/customers/me`
+7. PublicRoute redirects to `/dashboard`
+8. The visitor sees only their own wallets and transactions
+
 ---
 
 # 🌐 API Integration
@@ -498,6 +539,25 @@ POST /auth/login
   "type": "Bearer"
 }
 ```
+
+---
+
+## Guest Session
+
+```http
+POST /auth/guest
+```
+
+The request does not include a body. The backend creates a unique temporary customer and returns the same JWT contract used by normal login:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "type": "Bearer"
+}
+```
+
+The response does not expose the generated CPF, email or password.
 
 ---
 
@@ -616,6 +676,16 @@ GET /transactions/{id}
 
 ---
 
+## Reverse Transaction
+
+```http
+POST /transactions/{id}/reverse
+```
+
+The endpoint does not require a request body. Only `ACTIVE` transactions can be reversed. The response contains the updated transaction with status `REVERSED`; its financial impact is reverted, the wallet balance is restored, and the transaction remains in history.
+
+---
+
 # 📊 Dashboard Endpoints
 
 ## Get Authenticated Financial Summary
@@ -647,6 +717,7 @@ Authorization: Bearer <JWT_TOKEN>
       "type": "EXPENSE",
       "category": "FOOD",
       "walletName": "Main Wallet",
+      "status": "ACTIVE",
       "createdAt": "2026-05-25T20:29:00.910114"
     }
   ]
@@ -759,34 +830,24 @@ Spring Boot systemd service
 
 # 🧪 Testing Status
 
-The project currently builds successfully with TypeScript.
+The project currently passes its lint and production build validation. The frontend does not yet include automated test infrastructure.
 
 Current validation:
 
-* `yarn build` passing
-* Authentication manually validated
-* Visitor demo login manually validated
-* Dashboard integration manually validated
-* Wallet and transaction flows manually validated
-* Light/Dark theme manually validated
-* Vercel deployment manually validated
-* API proxy manually validated
-* SPA route refresh manually validated
-
-Known note:
-
-* `yarn lint` currently reports a preexisting React Fast Refresh warning in `AuthContext.tsx` related to `react-refresh/only-export-components`. This does not block the production build.
+* `npm run lint` passing
+* `npm run build` passing
+* Isolated guest access manually validated in production
+* Guest isolation manually validated with separate sessions
+* Transaction reversal manually validated
+* Dashboard recalculation after reversal manually validated
+* OCI backend deployment validated
+* Vercel production deployment validated
 
 Planned improvements:
 
-* Unit tests for components
-* Integration tests for authentication flows
-* Tests for protected routes
-* Tests for wallet and transaction forms
-* Tests for dashboard rendering
+* Automated frontend testing
 * Accessibility improvements
-* CI pipeline for build and tests
-* Lint cleanup for React Fast Refresh structure
+* CI validation
 
 ---
 
@@ -794,17 +855,19 @@ Planned improvements:
 
 Planned next steps include:
 
-* Transaction cancellation UI
-* Transaction editing UI
-* Filters and pagination for transactions
-* More complete dashboard analytics
-* Better empty-state onboarding
-* Accessibility refinements
-* Automated testing setup
+* Transaction filters
+* Transaction pagination
+* Transaction ordering
+* Automated frontend testing
+* Shared authenticated layout
+* Responsive navigation improvements
+* Registration and UI standardization
+* Improved loading, error, empty and confirmation states
 * CI validation
-* Improved mobile experience
-* Possible future chart visualizations
-* Future backend HTTPS setup with domain, Nginx and SSL certificate
+* Mobile refinements
+* Accessibility improvements
+* Possible dashboard charts
+* Backend HTTPS and domain setup
 
 ---
 
